@@ -1,11 +1,9 @@
-# main.py
-
 from fastapi import FastAPI, HTTPException, Request
+from fastapi.responses import JSONResponse          # <-- Must have
 from fastapi.templating import Jinja2Templates
-from pydantic import BaseModel, Field, field_validator  # Use @validator for Pydantic 1.x
+from pydantic import BaseModel, Field, field_validator
 from fastapi.exceptions import RequestValidationError
-from app.operations import add, subtract, multiply, divide  # Ensure correct import path
-from starlette.middleware.base import BaseHTTPMiddleware
+from app.operations import add, subtract, multiply, divide
 import uvicorn
 import logging
 
@@ -61,7 +59,7 @@ async def read_root(request: Request):
     """
     Serve the index.html template.
     """
-    return templates.TemplateResponse("index.html", {"request": request})  # type: ignore
+    return templates.TemplateResponse(request, "index.html")
 
 @app.post("/add", response_model=OperationResponse, responses={400: {"model": ErrorResponse}})
 async def add_route(operation: OperationRequest):
