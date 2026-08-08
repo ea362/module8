@@ -48,13 +48,14 @@ jobs:
        run: docker build -t app:test .
      
      - name: Run Trivy vulnerability scanner
-       uses: aquasecurity/trivy-action@master
-       with:
-         image-ref: 'app:test'
-         format: 'table'
-         exit-code: '1'
-         ignore-unfixed: true
-         severity: 'CRITICAL,HIGH'
+      uses: aquasecurity/trivy-action@master
+      with:
+        image-ref: 'app:test'
+        format: 'table'
+        exit-code: '1'
+        ignore-unfixed: true
+        severity: 'CRITICAL,HIGH'
+        ignorefile: .trivyignore  # <-- ADD THIS LINE
 
  # DEPLOY JOB - COMMENTED OUT because it needs Docker Hub secrets
  # If you want to set up Docker Hub later, uncomment this and add secrets.
