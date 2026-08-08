@@ -1,5 +1,5 @@
-# Use the official Playwright Python image as the base (matches the course requirements)
-FROM mcr.microsoft.com/playwright/python:v1.47.0-noble
+# Use the official Playwright Python image with matching version
+FROM mcr.microsoft.com/playwright/python:v1.62.0-noble
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -10,15 +10,12 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install Playwright browsers (required for E2E tests inside the container)
-RUN playwright install
-
 # Copy the rest of the application code into the container
 COPY . .
 
-# Create a non-root user (as recommended in the course notes)
-RUN useradd -m -u 1000 appuser && chown -R appuser:appuser /app
-USER appuser
+# Playwright already has a non-root user (UID 1000) in the base image
+# No need to create a new user—just use the existing one
+USER pwuser
 
 # Expose the port the app runs on
 EXPOSE 8000
