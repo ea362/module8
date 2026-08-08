@@ -1,7 +1,6 @@
 # main.py
 
 from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import JSONResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel, Field, field_validator  # Use @validator for Pydantic 1.x
 from fastapi.exceptions import RequestValidationError
@@ -9,22 +8,13 @@ from app.operations import add, subtract, multiply, divide  # Ensure correct imp
 from starlette.middleware.base import BaseHTTPMiddleware
 import uvicorn
 import logging
-import time
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI()
-class LoggingMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request, call_next):
-        start_time = time.time()
-        response = await call_next(request)
-        process_time = time.time() - start_time
-        logger.info(f"Request: {request.method} {request.url.path} - {response.status_code} - {process_time:.3f}s")
-        return response
 
-app.add_middleware(LoggingMiddleware)
 # Setup templates directory
 templates = Jinja2Templates(directory="templates")
 
@@ -71,7 +61,7 @@ async def read_root(request: Request):
     """
     Serve the index.html template.
     """
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse("index.html", {"request": request})  # type: ignore
 
 @app.post("/add", response_model=OperationResponse, responses={400: {"model": ErrorResponse}})
 async def add_route(operation: OperationRequest):

@@ -240,20 +240,12 @@ def test_operation_request_invalid_data():
     Test the Pydantic validator with invalid input.
 
     This test verifies that when non-numeric data is passed to the OperationRequest
-    model, the validator correctly raises a ValidationError with an appropriate
-    message. This ensures our API properly rejects malformed requests.
-
-    Steps:
-    1. Attempt to create an OperationRequest instance with a string for 'a'.
-    2. Expect a ValidationError to be raised.
-    3. Verify the error message indicates a value error.
+    model, a ValidationError is raised with the appropriate message.
     """
-    # Attempt to create an OperationRequest with invalid data
     with pytest.raises(ValidationError) as excinfo:
         OperationRequest(a="not_a_number", b=5)
-    
-    # Check that the error message contains the expected text
-    # The validator raises ValueError which Pydantic wraps in ValidationError
+
     error_str = str(excinfo.value)
-    assert 'value_error' in error_str.lower() or 'both a and b must be numbers' in error_str.lower(), \
+    # Pydantic v2 returns a message containing "Input should be a valid number"
+    assert "Input should be a valid number" in error_str or "float_parsing" in error_str, \
         f"Expected validation error for invalid number, got: {error_str}"
