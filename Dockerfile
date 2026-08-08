@@ -7,14 +7,15 @@ WORKDIR /app
 # Copy the requirements file first (for better caching)
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+# Install Python dependencies AND force upgrade vulnerable packages
+RUN pip install --no-cache-dir --upgrade pip \
+    && pip install --no-cache-dir -r requirements.txt \
+    && pip install --no-cache-dir --upgrade msgpack setuptools
 
 # Copy the rest of the application code into the container
 COPY . .
 
 # Playwright already has a non-root user (UID 1000) in the base image
-# No need to create a new user—just use the existing one
 USER pwuser
 
 # Expose the port the app runs on
